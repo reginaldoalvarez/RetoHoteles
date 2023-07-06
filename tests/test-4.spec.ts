@@ -137,6 +137,7 @@ test('test', async ({ page }) => {
   };
   
   await page.locator('span').filter({ hasText: 'APPLY' }).click();
+  await page. aqui fue
 
 
 
