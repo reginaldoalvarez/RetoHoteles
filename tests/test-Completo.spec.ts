@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { navigateAndCaptureHotels } from './HotelList.ts';
 import { dataIN } from './ingresoDatos.ts';
-import { FilterHotels } from './aplicarFiltros.ts';
+import { FilterHotels,OurRating } from './aplicarFiltros.ts';
 
 test('test', async ({ page }) => {
 
@@ -25,7 +25,7 @@ test('test', async ({ page }) => {
 
 
 
-  //Corregir la direccion
+  //Corregir la direccion ene el total de hoteles
   const HotelList = FilterhotelList.map(hotel => ({
      ...hotel,
      city: hotel.city.split('\n')[1].trim()
@@ -36,10 +36,19 @@ test('test', async ({ page }) => {
    console.log('Lsta completa: ',HotelList) 
 
 
+   const Star = await OurRating(page)
+   console.log('Impresion de los checks antes del filtro: ',Star)
 
 //APLICAR FILTROS
 
 await FilterHotels(page);
+
+const OurRatingCheck = await OurRating(page)
+console.log('Impresion de los checks antes del filtro: ',OurRatingCheck)
+
+
+
+
 
   await page.locator('span').filter({ hasText: 'APPLY' }).click();
 
@@ -47,7 +56,7 @@ await FilterHotels(page);
     const items = document.querySelectorAll('td.MainContentPlaceHolder_HotelsDataView_CCell  div.hotel-common')
   })
 
-  ///////CAPTURA DE HOTELES////
+  ///////CAPTURA DE HOTELES FILTRADOS////
   const FilterEDhotelList = await navigateAndCaptureHotels(page);
   //console.log('numero de Hoteles fILtrados : ',FilterEDhotelList.length)
   //console.log('Estos son Los hoteles  filtrados: ', FilterEDhotelList);

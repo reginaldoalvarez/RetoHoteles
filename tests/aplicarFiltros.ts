@@ -1,14 +1,18 @@
 //aplicarFiltros.ts
+
+
+//const RB = {};
+ 
 export async function FilterHotels(page: any) {
   // ... código de la función navigateAndFilterHotels ...
-  
 
-  //RANGO DE PRECIO
+
+  //RANGO DE PRECIO -inicio
   const dragLocator = '#MainContentPlaceHolder_FilterFormLayout_NightlyRateTrackBar_MD';//localizador del drag que se mueve de izquierda a derecha
   await page.locator(dragLocator).click();// clien en el Localizador
   const rangominimolocator = '#NightyRateTrackBarLabel_L'// Localizador de cantidad minima del Rango que se muestra
   const Rangoinicial = await page.locator(rangominimolocator).innerText(); //se guarda rangominimolocator
-  console.log('Rango Inicial antes del Filtro: ',Rangoinicial)
+  console.log('Rango Inicial antes del Filtro: ', Rangoinicial)
   const rangeX = parseInt(Rangoinicial.slice(1)); //obtenemos valor numerico de rangominimolocator
   const valoresperadoInt = 200// rango minimo al que queremos llegar
   const ValorMoverMouse = valoresperadoInt - rangeX// cuanto se debe mover de izquierda a derecha
@@ -19,20 +23,51 @@ export async function FilterHotels(page: any) {
       await page.mouse.wheel(0, 1)  //mover el localizador la distancia (puntos) calculados, punto a punto
     }
   }
-
+  //RANGO DE PRECIO -fin
 
 
   //Our Rating:
 
-  //await page.locator("//td[@class='dxichCellSys']//input[contains(@id,'RB1')]/parent::span/parent::span").click()//simulando unchecked
+  //await page.locator("//td[@class='dxichCellSys']//input[contains(@id,'Star1')]/parent::span/parent::span").click()//simulando unchecked
 
-
+  //ESTRELLAS -inicio
   //Marcar con true las estrellas que desea y con false las que no desea para filtrar:  Object.entries({one: false, two: false, tree: true, four: true, five: true})
   const OurRatingDeseado = Object.entries({ one: false, two: false, tree: true, four: true, five: true })
   //para acceder por ejemplo, OurRatingDeseado[0][0] te dará la primera clave 'one' y OurRatingDeseado[0][1] te dará el primer valor false
-  const RB = {};
-  const dtCheckBoxChecked = true
-  const dtCheckBoxUnchecked = false
+  
+   const Star = await OurRating(page)
+   //console.log('estamos dentro del filtro: ',Star)
+   const dtCheckBoxChecked = true
+   const dtCheckBoxUnchecked = false
+
+  //CAMBIO DEL CHECK SEGUN LO DESEADO
+  for (let i = 0; i < OurRatingDeseado.length; i++) {
+    const clickBoxLocator = "//td[@class='dxichCellSys']//input[contains(@id,'RB" + i + "')]/parent::span/parent::span";
+    if (OurRatingDeseado[i][1] === dtCheckBoxUnchecked) {
+      if (Star['Star' + i] === 'dtCheckBoxUnchecked') {
+        await page.locator(clickBoxLocator).click();
+        //console.log('Marcar check')
+      } else {
+        if (Star['Star' + i] === 'dtCheckBoxChecked') {
+          await page.locator(clickBoxLocator).click();
+          //console.log('Desmarcar check')
+        }
+      }
+
+    }
+  };
+
+ 
+
+  //ESTRELLAS -fin
+
+
+}
+
+ //Otener todo wl localizador del check
+
+ export async function OurRating(page: any) {
+  const Star = {};
   for (let i = 0; i < 5; i++) {
     const elemento = await page.locator("//td[@class='dxichCellSys']//input[contains(@id,'RB" + i + "')]/parent::span/parent::span");
     const localizadorCompleto = await elemento.evaluate((el) => {
@@ -46,22 +81,11 @@ export async function FilterHotels(page: any) {
 
     //console.log(subcadena); // Imprimir la subcadena
 
-    RB['RB' + i] = subcadena;
+    Star['Star' + i] = subcadena;
+
+
 
   }
-  console.log('Estado de seleccion de las Estrellas de Rating: ',RB)
-  for (let i = 0; i < OurRatingDeseado.length; i++) {
-    const clickBoxLocator = "//td[@class='dxichCellSys']//input[contains(@id,'RB" + i + "')]/parent::span/parent::span";
-    if (OurRatingDeseado[i][1] === dtCheckBoxUnchecked) {
-      if (RB['RB' + i] === 'dtCheckBoxUnchecked') {
-        await page.locator(clickBoxLocator).click();
-      } else {
-        if (RB['RB' + i] === 'dtCheckBoxChecked') {
-          await page.locator(clickBoxLocator).click();
-        }
-      }
-
-    }
-  };
-  
+  return Star;
+  //console.log('dentro de la funcion OurRating: ', Star)
 }
