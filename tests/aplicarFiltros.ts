@@ -2,7 +2,7 @@
 
 
 //const RB = {};
- 
+
 export async function FilterHotels(page: any) {
   // ... código de la función navigateAndFilterHotels ...
 
@@ -13,15 +13,15 @@ export async function FilterHotels(page: any) {
   const rangominimolocator = '#NightyRateTrackBarLabel_L'// Localizador de cantidad minima del Rango que se muestra
   const Rangoinicial = await page.locator(rangominimolocator).innerText(); //se guarda rangominimolocator
   console.log('Rango Inicial antes del Filtro: ', Rangoinicial)
-  const rangeX = parseInt(Rangoinicial.slice(1)); //obtenemos valor numerico de rangominimolocator
+  let rangeX = parseInt(Rangoinicial.slice(1)); //obtenemos valor numerico de rangominimolocator
   const valoresperadoInt = 200// rango minimo al que queremos llegar
   const ValorMoverMouse = valoresperadoInt - rangeX// cuanto se debe mover de izquierda a derecha
 
-  if (rangeX < valoresperadoInt) {
-    await page.locator(dragLocator).click();
-    for (let i = 0; i < ValorMoverMouse; i++) {
-      await page.mouse.wheel(0, 1)  //mover el localizador la distancia (puntos) calculados, punto a punto
-    }
+  
+  await page.locator(dragLocator).click()
+  while (rangeX < valoresperadoInt) {      
+      await page.mouse.wheel(0, 1)   
+      rangeX =await parseInt((await page.locator(rangominimolocator).innerText()).slice(1));
   }
   //RANGO DE PRECIO -fin
 
@@ -32,13 +32,13 @@ export async function FilterHotels(page: any) {
 
   //ESTRELLAS -inicio
   //Marcar con true las estrellas que desea y con false las que no desea para filtrar:  Object.entries({one: false, two: false, tree: true, four: true, five: true})
-  const OurRatingDeseado = Object.entries({ one: false, two: false, tree: true, four: true, five: true })
+  const OurRatingDeseado = Object.entries({ one: false, two: false, tree: false, four: false, five: true })
   //para acceder por ejemplo, OurRatingDeseado[0][0] te dará la primera clave 'one' y OurRatingDeseado[0][1] te dará el primer valor false
-  
-   const Star = await OurRating(page)
-   //console.log('estamos dentro del filtro: ',Star)
-   const dtCheckBoxChecked = true
-   const dtCheckBoxUnchecked = false
+
+  const Star = await OurRating(page)
+  //console.log('estamos dentro del filtro: ',Star)
+  const dtCheckBoxChecked = true
+  const dtCheckBoxUnchecked = false
 
   //CAMBIO DEL CHECK SEGUN LO DESEADO
   for (let i = 0; i < OurRatingDeseado.length; i++) {
@@ -57,16 +57,16 @@ export async function FilterHotels(page: any) {
     }
   };
 
- 
+
 
   //ESTRELLAS -fin
 
 
 }
 
- //Otener todo wl localizador del check
+//Otener todo wl localizador del check
 
- export async function OurRating(page: any) {
+export async function OurRating(page: any) {
   const Star = {};
   for (let i = 0; i < 5; i++) {
     const elemento = await page.locator("//td[@class='dxichCellSys']//input[contains(@id,'RB" + i + "')]/parent::span/parent::span");
