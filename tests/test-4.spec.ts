@@ -137,11 +137,10 @@ test('test', async ({ page }) => {
   };
   
   await page.locator('span').filter({ hasText: 'APPLY' }).click();
-  await page. aqui fue
 
-
-
-
+  await page.evaluate(()=>{
+    const items = document.querySelectorAll('td.MainContentPlaceHolder_HotelsDataView_CCell  div.hotel-common')
+  })
 
 
 
