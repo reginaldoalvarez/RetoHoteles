@@ -2,6 +2,8 @@
 
 
 //const RB = {};
+const OurRatingDeseado = Object.entries({ one: false, two: false, tree: true, four: true, five: true });
+
 
 export async function FilterHotels(page: any) {
   // ... código de la función navigateAndFilterHotels ...
@@ -32,7 +34,7 @@ export async function FilterHotels(page: any) {
 
   //ESTRELLAS -inicio
   //Marcar con true las estrellas que desea y con false las que no desea para filtrar:  Object.entries({one: false, two: false, tree: true, four: true, five: true})
-  const OurRatingDeseado = Object.entries({ one: false, two: false, tree: false, four: false, five: true })
+  const OurRatingDeseado = Object.entries({ one: false, two: false, tree: true, four: true, five: true })
   //para acceder por ejemplo, OurRatingDeseado[0][0] te dará la primera clave 'one' y OurRatingDeseado[0][1] te dará el primer valor false
 
   const Star = await OurRating(page)
@@ -55,14 +57,15 @@ export async function FilterHotels(page: any) {
       }
 
     }
+    
   };
 
 
 
   //ESTRELLAS -fin
 
-
-}
+  
+}export { OurRatingDeseado };
 
 //Otener todo wl localizador del check
 
@@ -89,3 +92,5 @@ export async function OurRating(page: any) {
   return Star;
   //console.log('dentro de la funcion OurRating: ', Star)
 }
+
+

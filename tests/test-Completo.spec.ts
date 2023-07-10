@@ -1,7 +1,10 @@
+//test-Completo.epec.ts
+
 import { test, expect } from '@playwright/test';
 import { navigateAndCaptureHotels } from './HotelList.ts';
 import { dataIN } from './ingresoDatos.ts';
-import { FilterHotels,OurRating } from './aplicarFiltros.ts';
+import { FilterHotels, OurRating  } from './aplicarFiltros.ts';
+import { OurRatingDeseado } from './aplicarFiltros.ts';
 
 test('test', async ({ page }) => {
 
@@ -23,8 +26,6 @@ test('test', async ({ page }) => {
   //console.log('numero Total de Hoteles : ',FilterhotelList.length)
   //console.log('FilterhotelList:', FilterhotelList);
 
-
-
   //Corregir la direccion ene el total de hoteles
   const HotelList = FilterhotelList.map(hotel => ({
      ...hotel,
@@ -39,16 +40,47 @@ test('test', async ({ page }) => {
    const Star = await OurRating(page)
    console.log('Impresion de los checks antes del filtro: ',Star)
 
+
+   //ESCOGER EL HOTEL MAS ECONOMICO (superior a 200) CON ESTRELLAS SELECCIONADAS
+   //hoteles con estrellas seleccionadas
+   
+   const filteredHotels = HotelList.filter(hotel => {
+    const filteredByRating = OurRatingDeseado.some(([rating, isSelected]) => {
+      if (isSelected) {
+        const numericRating = parseFloat(hotel.rating);
+        return numericRating.toString() === rating;
+      }
+      return true;
+    });
+  
+    const price = parseFloat(hotel.price.replace('$', ''));
+    return filteredByRating && price > 200;
+  });
+  
+    
+  
+  console.log('------------filtered Hoteles: -------------------------------------')
+  console.log('------------Calculo de Cantidad de Hoteles filtered Hoteles: ',filteredHotels.length)
+  console.log('------------filtered Hoteles: ',filteredHotels)
+  //Ordenar los hoteles por precio
+  filteredHotels.sort((a, b) => {
+    const priceA = parseFloat(a.price.replace('$', ''));
+    const priceB = parseFloat(b.price.replace('$', ''));
+    return priceA - priceB;
+  });
+  //seleccionar el primero que seria el mas economico
+  const cheapestHotel = filteredHotels[0];
+  console.log('Este es el hotel mas economico: ',cheapestHotel)
+
+  
+  
+
 //APLICAR FILTROS
 
 await FilterHotels(page);
 
 const OurRatingCheck = await OurRating(page)
 console.log('Impresion de los checks antes del filtro: ',OurRatingCheck)
-
-
-
-
 
   await page.locator('span').filter({ hasText: 'APPLY' }).click();
 
@@ -67,6 +99,12 @@ console.log('Impresion de los checks antes del filtro: ',OurRatingCheck)
   }));
   console.log('numero de Hoteles despues de fILtrar : ',FilterHotelList.length)
   console.log('Estos son Los hoteles  filtrados: ', FilterHotelList);
+
+
+  //RESERVAR EL HOTEL MAS ECONOMINCO >200 Y CON ESTRELLAS SELECCIONADAS
+
+
+
 
 
 
