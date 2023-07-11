@@ -20,6 +20,8 @@ test('test', async ({ page }) => {
   await page.waitForTimeout(1000)
 
   
+
+  
   
 ///////CAPTURA DE HOTELES////
   const FilterhotelList = await navigateAndCaptureHotels(page);
